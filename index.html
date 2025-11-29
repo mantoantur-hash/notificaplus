@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Notifica+</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  body {
+    font-family: Arial;
+    padding: 20px;
+    background: #000;
+    color: #0af;
+    text-align: center;
+  }
+  .btn {
+    background: #0af;
+    color: #000;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    width: 100%;
+    font-size: 20px;
+    margin-top: 80px;
+  }
+  .box {
+    display: none;
+    margin-top: 20px;
+  }
+  input, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 18px;
+  }
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Notifica+</h1>
+
+<button class="btn" onclick="mostrarCriar()">Criar nova notificação</button>
+
+<div class="box" id="criador">
+  <input type="text" id="nome" placeholder="Nome">
+  <textarea id="mensagem" placeholder="Digite a notificação"></textarea>
+  <input type="file" id="foto" accept="image/*">
+  <img id="preview" style="display:none;">
+  <button onclick="pedirPermissao()">Ativar Notificações 🔔</button>
+  <button onclick="enviarNotificacao()">Notificar</button>
+</div>
+
+<script>
+let fotoURL = "";
+
+function mostrarCriar() {
+  document.querySelector(".btn").style.display = "none";
+  document.getElementById("criador").style.display = "block";
+}
+
+document.getElementById("foto").addEventListener("change", function() {
+  let file = this.files[0];
+  fotoURL = URL.createObjectURL(file);
+  let prev = document.getElementById("preview");
+  prev.src = fotoURL;
+  prev.style.display = "block";
+});
+
+function pedirPermissao() {
+  Notification.requestPermission().then(result => {
+    alert(result === "granted" ? "Notificações ativadas!" : "Permita notificações!");
+  });
+}
+
+function enviarNotificacao() {
+  let nome = document.getElementById("nome").value;
+  let mensagem = document.getElementById("mensagem").value;
+
+  if (Notification.permission !== "granted") {
+    alert("Ative notificações primeiro!");
+    return;
+  }
+
+  new Notification(nome || "Nova Notificação", {
+    body: mensagem || "Sem mensagem",
+    icon: fotoURL || ""
+  });
+}
+</script>
+
+</body>
+  </html>
